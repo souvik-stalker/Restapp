@@ -10,7 +10,9 @@
   "author": "Souvik Banerjee",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.279.1",
     "express": "^4.16.3",
+    "fs-extra": "^7.0.0",
     "lodash": "^4.17.10",
     "yargs": "^3.7.1"
   }
