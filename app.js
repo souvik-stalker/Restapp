@@ -4,12 +4,14 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var AWS = require('aws-sdk');
 var fs = require('fs-extra');
+var atob = require('atob');
+var Blob = require('blob');
 
 
 var app= express();
 var port = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use((req,res,next)=>{
   res.setHeader('Access-Control-Allow-Origin','*');
@@ -21,8 +23,8 @@ app.use((req,res,next)=>{
 app.post('/api/images',(req,res,next)=>{
   const rekognition = new AWS.Rekognition({
     region: "us-west-2",
-    accessKeyId: "AKIAJGFJQRHJ4UPJXE5Q",
-    secretAccessKey: "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"
+    accessKeyId: req.body.KeyId,
+    secretAccessKey: req.body.secretId,
   });
   var params = {
     Image: {
@@ -36,9 +38,9 @@ app.post('/api/images',(req,res,next)=>{
   rekognition.detectFaces(params, function(err, data) {
       if (err) console.log(err, err.stack); // an error occurred
       else {
-		  let jsonString = JSON.stringify(data,null,2);  
+		  let return_data = {'ageRange': data.FaceDetails[0].AgeRange,'gender': data.FaceDetails[0].Gender,'smile':data.FaceDetails[0].Smile,'eyeGlasses': data.FaceDetails[0].Eyeglasses}; 
 		  res.status(200).json({
-				message:jsonString
+				message:return_data
 			  });
 	  }		  // successful response
     });
@@ -54,9 +56,9 @@ app.post('/api/images',(req,res,next)=>{
           ua[i] = binaryImg.charCodeAt(i);
         }
 
-        var blob = new Blob([ab], {
-          type: "image/jpeg"
-        });
+        //var blob = new Blob([ab], {
+         // type: "image/jpeg"
+        //});
 
         return ab;
       }
