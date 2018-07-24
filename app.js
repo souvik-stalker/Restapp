@@ -36,8 +36,14 @@ app.post('/api/images',(req,res,next)=>{
     ]
   };
   rekognition.detectFaces(params, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
+      if (err) { // an error occurred
+        console.log("ERRRRRRR");
+        res.status(200).json({
+          message:'Error Occured...please check the Image'
+          });
+       } 
       else {
+        console.log(data);
 		  let return_data = {'ageRange': data.FaceDetails[0].AgeRange,'gender': data.FaceDetails[0].Gender,'smile':data.FaceDetails[0].Smile,'eyeGlasses': data.FaceDetails[0].Eyeglasses}; 
 		  res.status(200).json({
 				message:return_data
