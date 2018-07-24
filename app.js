@@ -36,18 +36,24 @@ app.post('/api/images',(req,res,next)=>{
     ]
   };
   rekognition.detectFaces(params, function(err, data) {
-      if (err) { // an error occurred
-        console.log("ERRRRRRR");
-        res.status(200).json({
-          message:'Error Occured...please check the Image'
+      if (err) {
+        console.log(err, err.stack);
+        return res.status(400).json({
+          message:"ERROR OCCURED, Please check network issue"
           });
-       } 
+      } // an error occurred
       else {
-        console.log(data);
-		  let return_data = {'ageRange': data.FaceDetails[0].AgeRange,'gender': data.FaceDetails[0].Gender,'smile':data.FaceDetails[0].Smile,'eyeGlasses': data.FaceDetails[0].Eyeglasses}; 
-		  res.status(200).json({
-				message:return_data
-			  });
+      if(data.FaceDetails.length >0){
+        let return_data = {'ageRange': data.FaceDetails[0].AgeRange,'gender': data.FaceDetails[0].Gender,'smile':data.FaceDetails[0].Smile,'eyeGlasses': data.FaceDetails[0].Eyeglasses}; 
+        return res.status(200).json({
+            message:return_data
+            });
+      } else {
+        return res.status(400).json({
+          message:"Please Pass Proper Image, Uploaded image doen't contain any Face"
+          });
+      }
+		  
 	  }		  // successful response
     });
   
