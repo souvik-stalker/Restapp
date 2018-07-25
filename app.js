@@ -2,17 +2,32 @@
 const _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
+const path = require('path');
 var AWS = require('aws-sdk');
 var fs = require('fs-extra');
 var atob = require('atob');
 var Blob = require('blob');
+const mongoose = require('mongoose');
+
+const storesRoutes = require('./routes/stores');
 
 
 var app= express();
 var port = process.env.PORT || 3000;
 
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://souvik:souvik9038@ds253891.mlab.com:53891/store")
+.then(()=> {
+  console.log("Connected to database");
+}).catch((e) => {
+  console.log("Connection failed Error is ",e);
+});
+
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended:false}));
+
+app.use("/images",express.static(path.join("images")));
+
 app.use((req,res,next)=>{
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Headers','Origin,X-Requested-With,Content-Type,Accept');
@@ -58,6 +73,7 @@ app.post('/api/images',(req,res,next)=>{
     });
   
 });
+
  function getBinary(encodedFile) {
         var base64Image = encodedFile.split("data:image/jpeg;base64,")[1];
         var binaryImg = atob(base64Image);
@@ -78,5 +94,6 @@ app.post('/api/images',(req,res,next)=>{
 app.listen(port,()=>{
     console.log("Server is running on port ",port);
 });
+app.use("/api/stores",storesRoutes);
 
 module.exports.app = app;
