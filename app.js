@@ -16,7 +16,8 @@ var app= express();
 var port = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://souvik:souvik9038@ds253891.mlab.com:53891/store")
+ mongoose.connect("mongodb://souvik:souvik9038@ds253891.mlab.com:53891/store")
+//mongoose.connect("mongodb://localhost:27017/store")
 .then(()=> {
   console.log("Connected to database");
 }).catch((e) => {
