@@ -76,6 +76,26 @@ router.get('/category/:brandid',(req,res,next)=>{
   });
 });
 router.get('/products',(req,res,next)=>{
+  const minAge = +req.query.minage; //+ means conversion to number
+  const maxAge = +req.query.maxage;
+  const gender = req.query.gender;
+if(minAge>=0 && maxAge>=0 && gender) {
+  Product.find({ age: {$gte: minAge, $lte: maxAge},gender:gender })
+  .populate('storeid')
+  .populate('brandid')
+  .populate('categoryid')
+  .then((products)=> {
+    res.status(200).json({
+      products:products
+    });
+  }).catch((e) => {
+    res.status(404).json({
+      message:"Error Occured",
+      error:e
+    });
+  });
+}
+else{
   Product.find()
   .populate('storeid')
   .populate('brandid')
@@ -90,6 +110,12 @@ router.get('/products',(req,res,next)=>{
       error:e
     });
   });
+}
+});
+router.get('/product',(req,res,next)=>{
+  
+
+    
 });
 
 
